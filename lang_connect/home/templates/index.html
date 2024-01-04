@@ -17,57 +17,50 @@
     </nav>
 
     <div class="body">
-        <div class="from">
-            <form id="translationForm" method="POST" enctype="multipart/form-data" action="{% url 'home:translate' %}">
-                {% csrf_token %}
-                <select name="translatingFrom" id="translatingFrom">
-                    <option selected value="en">English</option>
-                    <option value="es">Spanish</option>
-                    <option value="ml">Malayalam</option>
-                </select>
-                <!-- <input id="translateTo" name="translateTo" type="hidden"> -->
-                <textarea name="word" id="" cols="30" rows="10" placeholder="Add Text Here"></textarea>
-                <button type="submit">Translate</button>
-            </form>
+        <div class="translation-part">
+
+            <div class="from">
+                <form id="translationForm" method="POST" enctype="multipart/form-data"
+                    action="{% url 'home:translate' %}">
+                    {% csrf_token %}
+                    <select name="translatingFrom" id="translatingFrom">
+                        {% if zipped_language %}
+                        {% for name , code in zipped_language %}
+                        <option value="{{name}}">{{code}}</option>
+                        {% endfor %}
+                        {% endif %}
+                    </select>
+                    <!-- <input id="translateTo" name="translateTo" type="hidden"> -->
+                    <textarea name="word" id="" cols="30" rows="10" placeholder="Add Text Here"></textarea>
+                    <button type="submit">Translate</button>
+                </form>
+            </div>
+
+
+
+            <div class="to">
+                <form id="pronounciation">
+                    {% csrf_token %}
+                    <select id="translatingTo">
+                        {% if zipped_language2 %}
+                        {% for name , code in zipped_language2 %}
+                        <option value="{{name}}">{{code}}</option>
+                        {% endfor %}
+                        {% endif %}
+                    </select>
+                    <textarea id="translationResult" cols="30" rows="10"></textarea>
+                    <button type="submit">Speak</button>
+                </form>
+            </div>
+
+
         </div>
-        <div class="to">
-            <select id="translatingTo">
-                <option selected value="es">Spanish</option>
-                <option  value="en">English</option>
-                <option value="ml">Malayalam</option>
-            </select>
-                <textarea name="" id="translationResult" cols="30" rows="10" >{{ translation }}</textarea>
+
+        <div id="loader" class="loader">
+            <img src="{% static 'loader\7Mpw.gif' %}" alt="">
         </div>
     </div>
-    <script>
-        $(document).ready(function(){
-            $('#translationForm').submit(function(event){
-                event.preventDefault()
 
-                var formData = $(this).serialize()
-                var translatingTo = $('#translatingTo').val()
-                var translatingFrom = $('#translatingFrom').val()
-
-                formData += '&translatingTo=' + translatingTo;
-                formData += '&translatingFrom=' + translatingFrom
-
-                $.ajax({
-                type: 'POST',
-                url: "{% url 'home:translate' %}",  
-                data: formData,
-                success: function(response) {
-
-                    $('#translationResult').html(response.translation);
-                    console.log(formData)
-                },
-                error: function(xhr, errmsg, err) {
-                    console.log(errmsg);
-                }
-            });
-            })
-        })
-        
-    </script>
 </body>
 
 </html>

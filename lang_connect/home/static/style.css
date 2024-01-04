@@ -1,96 +1,106 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
 
 
-*{
-    font-family: 'Poppins', sans-serif;
-}
-nav {
-    background-color: #e8e5e50c;
-    padding: 10px;
-    text-align: left;
+.body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
 }
 
-#logo {
-    width: 50px;
-    height: auto;
-    display: inline-block;
-}
-.body{
-    height: 60vh;
+.translation-part {
     display: grid;
     grid-template-columns: auto auto;
-    grid-gap: 15px;
     justify-content: center;
+    grid-gap: 10px;
+    margin-bottom: 20px;
+}
+
+.from,
+.to {
+
+    height: 70%;
+    width: 100%;
+    padding: 20px;
+    border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin-bottom: 20px;
+}
+
+.loader {
+    display: none;
+    justify-content: center;
     align-items: center;
-    padding: 100px;
 }
 
-.from{
-    height: 70%;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-width: 400px; 
-    margin: 0 auto; 
-    padding: 20px; 
+.loader img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
 }
-
-.to{
-    height: 70%;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-width: 400px; 
-    margin: 0 auto; 
-    padding: 20px; 
-}
-
 
 label {
-    display: block; 
+    display: block;
     margin-bottom: 10px;
-    
+
 }
 
 select {
-    width: 100%; 
-    padding: 8px; 
+    width: 100%;
+    padding: 8px;
     margin-bottom: 15px;
     border: #5070ba9e 2px solid;
     padding: 2px;
     border-radius: 5px;
-    
+
 }
 
 textarea {
     width: 95%;
     padding: 10px;
     margin-bottom: 15px;
-    resize: vertical; 
-    border: 1px solid #ccc; 
+    resize: vertical;
+    border: 1px solid #ccc;
     resize: none;
 
 }
 
 
 textarea::placeholder {
-    color: #43414189; 
+    color: #43414189;
 }
 
-button{
+button {
     background-color: rgb(0, 114, 245);
     color: white;
     border: none;
     padding: 5px;
     border-radius: 3px;
-    box-shadow:0 2px 4px rgba(0, 0, 0, 0.1) ;
-    transition: 0.3s ease-in-out;  
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease-in-out;
 }
-button:hover{
+
+button:hover {
     background-color: white;
-    color:  rgb(0, 114, 245);
-    transition: 0.2s ease-in-out;  
+    color: rgb(0, 114, 245);
+    transition: 0.2s ease-in-out;
 }
 
+@media screen and (max-width: 768px) {
+    .translation-part {
+        flex-direction: column;
+        align-items: center;
+    }
 
+    .from,
+    .to {
+        width: 100%;
+        margin: 0;
+    }
+
+    .to {
+        margin-top: 20px;
+        /* Space between "to" and "loader" */
+    }
+}
