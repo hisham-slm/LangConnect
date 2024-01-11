@@ -12,6 +12,147 @@
 </head>
 
 <body>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .body {
+            display: grid;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        nav {
+            background-color: #e8e5e50c;
+            padding: 10px;
+            text-align: left;
+        }
+
+        #logo {
+            width: 50px;
+            height: auto;
+            display: inline-block;
+        }
+
+
+        .translation-part {
+            display: grid;
+            grid-template-columns: auto auto;
+            justify-content: center;
+            grid-gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .from,
+        .to {
+
+            height: 70%;
+            width: 100%;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+
+        .loader ,.speaking {
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader img , .speaking img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+
+        }
+
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: #5070ba9e 2px solid;
+            padding: 2px;
+            border-radius: 5px;
+
+        }
+
+        textarea {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 15px;
+            resize: vertical;
+            border: 1px solid #ccc;
+            resize: none;
+
+        }
+
+
+        textarea::placeholder {
+            color: #43414189;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        button {
+            background-color: rgb(0, 114, 245);
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: white;
+            color: rgb(0, 114, 245);
+            transition: 0.2s ease-in-out;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #0000004a;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+
+        @media screen and (max-width: 768px) {
+            .translation-part {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .from,
+            .to {
+                width: 100%;
+                margin: 0;
+            }
+
+            .to {
+                margin-top: 20px;
+                /* Space between "to" and "loader" */
+            }
+        }
+    </style>
     <nav>
         <img id="logo" src="{% static 'images/translation.png' %}" alt="logo">
     </nav>
@@ -50,6 +191,7 @@
                     </select>
                     <textarea id="translationResult" cols="30" rows="10"></textarea>
                     <button type="submit">Speak</button>
+                    <button id="copyButton">Copy</button>
                 </form>
             </div>
 
@@ -59,7 +201,99 @@
         <div id="loader" class="loader">
             <img src="{% static 'loader\7Mpw.gif' %}" alt="">
         </div>
+        <div id="speakingAnimation" class="speaking">
+            <img src="{% static 'loader\speakingAnimation.gif' %}" alt="sfsdf">
+        </div>
+
+        <div id="notification" class="notification">
+            Copied!
+        </div>
     </div>
+    <script>
+
+        $(document).ready(function () {
+            $('#translationForm').submit(function (event) {
+                event.preventDefault()
+
+                var formData = $(this).serialize()
+                var translatingTo = $('#translatingTo').val()
+                var translatingFrom = $('#translatingFrom').val()
+
+
+
+
+                formData += '&translatingTo=' + translatingTo;
+                formData += '&translatingFrom=' + translatingFrom
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'home:translate' %}",
+                    data: formData,
+                    beforeSend: function () {
+                        $('#loader').css('display', 'flex')
+                    }
+                    ,
+                    success: function (response) {
+                        $('#loader').css('display', 'none')
+
+                        $('#translationResult').html(response.translation);
+                        console.log(formData)
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log(errmsg);
+                    }
+                });
+            })
+
+            $('#pronounciation').submit(function (event) {
+                event.preventDefault()
+
+
+                var formData = $(this).serialize()
+                var word = $('#translationResult').val()
+                var language = $('#translatingTo').val()
+
+
+                formData += '&language=' + language
+                formData += '&word=' + word;
+
+                console.log(formData)
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'home:read_out' %}",
+                    data: formData,
+                    beforeSend: function () {
+                        $('#speakingAnimation').css('display', 'flex')
+                    },
+                    success: function (response) {
+                        $('#speakingAnimation').css('display', 'none')
+
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log(errmsg);
+                        $('#speakingAnimation').css('display', 'none')
+
+                    }
+                });
+            })
+            $('#copyButton').click(function (event) {
+                event.preventDefault()
+
+                console.log($('#translationResult').val())
+                navigator.clipboard.writeText($('#translationResult').val())
+
+                var notification = $('#notification');
+                notification.show();
+
+                setTimeout(function () {
+                    notification.hide();
+                }, 1000);
+
+
+            })
+        })
+    </script>
 
 </body>
 

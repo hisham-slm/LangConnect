@@ -1,10 +1,8 @@
-import os
-from django.shortcuts import render,redirect
-from django.urls import reverse
-from django.http import HttpResponse, JsonResponse, FileResponse
-import pyttsx3
+from django.shortcuts import render
+from django.http import  JsonResponse
 from googletrans import Translator , LANGUAGES
 from gtts import gTTS
+import pygame
 
 
 def home(request):
@@ -21,17 +19,6 @@ def home(request):
     zipped_language2 = zip(language_codes, language_names)
     return render(request, 'index.html' , {'zipped_language':zipped_language , 'zipped_language2':zipped_language2})
 
-def play(request):
-    engine = pyttsx3.init()
-    
-    string = 'hello world'
-    
-    engine.say(string)
-    
-    engine.runAndWait()
-    
-    return render(request, 'index.html')
-
 
 def translate(request):
     if request.method == "POST":
@@ -39,34 +26,30 @@ def translate(request):
         translating_from = request.POST['translatingFrom']
         word = request.POST['word']
         translator = Translator()
-        print(word)
         translation = translator.translate(word,dest=language,src=translating_from).text
         
         return JsonResponse({'translation' : translation})
 
 def read_out(request):
     if request.method == 'POST':
-        # word = request.POST['word']
-        # print(word)
-        
-        # engine = pyttsx3.init()
-        
-        # engine.say(word)
-        # engine.runAndWait()
-        
-        # return {'working'}
-        
+        status_code = 200
+        print('working readout')
         language = request.POST['language']
         
         word = request.POST['word']
         
+        
         speech = gTTS(lang = language, text= word) 
-        audio_file = 'test.mp3'
+        audio_file = 'test.wav'
         speech.save(audio_file)
+        pygame.mixer.init() 
+        
+        sound = pygame.mixer.Sound(audio_file)
+        sound.play()
+        pygame.time.wait(int(sound.get_length() * 1000)) 
         
         
-        try:
-            return FileResponse(open(audio_file, 'rb'), content_type='audio/mpeg')
-        except FileNotFoundError:
-            return HttpResponse("Audio file not found", status=404)
+
+        return status_code
+
     
