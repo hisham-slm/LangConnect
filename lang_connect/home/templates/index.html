@@ -59,13 +59,15 @@
             margin-bottom: 20px;
         }
 
-        .loader ,.speaking {
+        .loader,
+        .speaking {
             display: none;
             justify-content: center;
             align-items: center;
         }
 
-        .loader img , .speaking img {
+        .loader img,
+        .speaking img {
             width: 60px;
             height: 60px;
             border-radius: 50%;
@@ -172,8 +174,9 @@
                         {% endif %}
                     </select>
                     <!-- <input id="translateTo" name="translateTo" type="hidden"> -->
-                    <textarea name="word" id="" cols="30" rows="10" placeholder="Add Text Here"></textarea>
-                    <button type="submit">Translate</button>
+                    <textarea name="word" id="translatingWord" cols="30" rows="10"
+                        placeholder="Add Text Here"></textarea>
+                    <button id="translateButton" type="submit">Translate</button>
                 </form>
             </div>
 
@@ -190,7 +193,7 @@
                         {% endif %}
                     </select>
                     <textarea id="translationResult" cols="30" rows="10"></textarea>
-                    <button type="submit">Speak</button>
+                    <button id="speakingButton" type="submit">Speak</button>
                     <button id="copyButton">Copy</button>
                 </form>
             </div>
@@ -237,6 +240,9 @@
                         $('#loader').css('display', 'none')
 
                         $('#translationResult').html(response.translation);
+                        $('#speakingButton').prop('disabled', false);
+                        $('#copyButton').prop('disabled', false);
+                        console.log('enabled');
                         console.log(formData)
                     },
                     error: function (xhr, errmsg, err) {
@@ -269,6 +275,7 @@
                     success: function (response) {
                         $('#speakingAnimation').css('display', 'none')
 
+
                     },
                     error: function (xhr, errmsg, err) {
                         console.log(errmsg);
@@ -276,6 +283,8 @@
 
                     }
                 });
+
+
             })
             $('#copyButton').click(function (event) {
                 event.preventDefault()
@@ -291,6 +300,25 @@
                 }, 1000);
 
 
+            })
+
+
+            if ($('#translatingWord').val() == '') {
+                $('#translateButton').prop('disabled', true)
+                $('#speakingButton').prop('disabled', true);
+                $('#copyButton').prop('disabled', true);
+
+                console.log('translate,copy and speak button disabled')
+            }
+
+            $('#translatingWord').on('input', function () {
+                if ($('#translatingWord').val() == '') {
+                    $('#translateButton').prop('disabled', true)
+                    console.log('translate,copy and speak button disabled')
+                } else {
+                    $('#translateButton').prop('disabled', false)
+                    console.log('translate button enabled   ')
+                }
             })
         })
     </script>

@@ -67,5 +67,3 @@
 //     })
 // })
 // }
-
-console.log('loaded')
