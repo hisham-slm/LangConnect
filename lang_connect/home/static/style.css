@@ -44,16 +44,37 @@ nav {
     margin-bottom: 20px;
 }
 
-.loader {
+
+.loader,
+.speaking,
+.notification {
     display: none;
     justify-content: center;
     align-items: center;
 }
 
-.loader img {
+.loader img,
+.speaking img {
     width: 60px;
     height: 60px;
     border-radius: 50%;
+}
+
+.notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #0000004a;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    opacity: 0; 
+    transition: opacity 1s ease;
+}
+
+.notification.show {
+    opacity: 1;
 }
 
 label {
@@ -103,6 +124,8 @@ button:hover {
     color: rgb(0, 114, 245);
     transition: 0.2s ease-in-out;
 }
+
+
 
 @media screen and (max-width: 768px) {
     .translation-part {
